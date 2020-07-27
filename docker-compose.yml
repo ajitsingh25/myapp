@@ -7,6 +7,8 @@ services:
       - .env
     environment:
       MONGODB_HOSTNAME: mongodb
+      APP_PORT: 5000
+      APP_DEBUG: "False"
     ports:
       - "5000:5000"
     depends_on:
@@ -25,6 +27,12 @@ services:
       - mongodb_data:/data/db
     networks:
       - backend
+    healthcheck:
+      test: echo 'db.runCommand({serverStatus:1}).ok' | mongo admin -u $MONGO_INITDB_ROOT_USERNAME -p $MONGO_INITDB_ROOT_PASSWORD --quiet | grep 1
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
 
 networks:
   backend:

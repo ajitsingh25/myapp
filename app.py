@@ -104,5 +104,6 @@ def search():
 	return render_template('searchlist.html',todos=todos_l,t=title,h=heading)
 
 if __name__ == "__main__":
-
-    app.run(host='0.0.0.0')
+	ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", True)
+	ENVIRONMENT_PORT = os.environ.get("APP_PORT", 5000)
+	app.run(host='0.0.0.0', port=ENVIRONMENT_PORT, debug=ENVIRONMENT_DEBUG)
