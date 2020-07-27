@@ -1,0 +1,24 @@
+version: '3.7'
+services:
+  app:
+    image: test3
+    network_mode: host
+    # ports:
+    #   - "5000:5000"
+    depends_on:
+      - mongodb
+    #command: app.py run -h 0.0.0.0
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    network_mode: host
+    # ports:
+    #   - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
+
