@@ -2,23 +2,36 @@ version: '3.7'
 services:
   app:
     image: test3
-    network_mode: host
-    # ports:
-    #   - "5000:5000"
+    environment:
+      MONGODB_USERNAME: root
+      MONGODB_PASSWORD: rootpassword
+      MONGODB_HOSTNAME: mongodb
+    # network_mode: host
+    ports:
+      - "5000:5000"
     depends_on:
       - mongodb
-    #command: app.py run -h 0.0.0.0
+    networks:
+      - backend
+    
   mongodb:
     image: mongo:latest
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: rootpassword
-    network_mode: host
-    # ports:
-    #   - 27017:27017
+      MONGODB_USERNAME: root
+      MONGODB_PASSWORD: rootpassword
+    # network_mode: host
+    ports:
+      - 27017:27017
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - backend
+
+networks:
+  # frontend:
+  #   driver: bridge
+  backend:
+    driver: bridge
 
 volumes:
   mongodb_data:
-

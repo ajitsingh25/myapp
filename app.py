@@ -8,7 +8,9 @@ app = Flask(__name__)
 title = "TODO sample application with Flask and MongoDB"    
 heading = "TODO Reminder with Flask and MongoDB"    
     
-client = MongoClient("mongodb://root:rootpassword@0.0.0.0:27017") #host uri    
+client = MongoClient("mongodb://root:rootpassword@0.0.0.0:27017") 
+client = MongoClient('mongodb://' + os.environ['MONGODB_USERNAME'] + ':' + os.environ['MONGODB_PASSWORD'] + '@' + os.environ['MONGODB_HOSTNAME'] + ':27017')
+#client = MongoClient("mongodb://root:rootpassword@0.0.0.0:27017") #host uri    
 db = client.mymongodb    #Select the database    
 todos = db.todo #Select the collection name    
     
