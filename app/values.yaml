@@ -1,0 +1,38 @@
+replicaCount: 3
+dbReplicaCount: 1
+image:
+  repository: ajitsingh25/myapp
+  tag: 1.0
+  dbTag: latest
+ingress:
+  enabled: true
+service:
+  # Change to NodePort if ingress.enable=false
+  type: ClusterIP
+rbac:
+  enabled: false
+resources:
+  limits:
+   cpu: 0.8
+   memory: 200Mi
+  requests:
+   cpu: 0.4
+   memory: 100Mi
+dbResources:
+  limits:
+    memory: "200Mi"
+    cpu: 0.8
+  requests:
+    memory: "100Mi"
+    cpu: 0.4
+dbPersistence:
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  # storageClass: "-"
+  storageClass: slow
+  accessMode: ReadWriteOnce
+  size: 2Gi

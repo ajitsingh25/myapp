@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "helm.fullname" . }}-db
+  labels:
+    app: {{ template "helm.name" . }}-db
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  serviceName: {{ template "helm.fullname" . }}-db
+  replicas: {{ .Values.dbReplicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "helm.name" . }}-db
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "helm.name" . }}-db
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.rbac.enabled }}
+      serviceAccountName: {{ template "helm.fullname" . }}-db
+      {{- end }}
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: db
+        image: "mongo:{{ .Values.image.dbTag }}"
+        envFrom:
+          - configMapRef:
+              name: my-configmap
+        ports:
+          - containerPort: 27017
+        resources:
+{{ toYaml .Values.dbResources | indent 10 }}
+        volumeMounts:
+        - name: {{ template "helm.fullname" . }}-db
+          mountPath: /data/db
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ template "helm.fullname" . }}-db
+      labels:
+        app: {{ template "helm.name" . }}-db
+        chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+    spec:
+      accessModes:
+      - {{ .Values.dbPersistence.accessMode }}
+      resources:
+        requests:
+          storage: {{ .Values.dbPersistence.size }}
+      {{- if .Values.dbPersistence.storageClass }}
+      {{- if eq "-" .Values.dbPersistence.storageClass }}
+      storageClassName: ""
+      {{- else }}
+      storageClassName: "{{ .Values.dbPersistence.storageClass }}"
+      {{- end }}
+      {{- end }}
