@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      type: api
+  template:
+    metadata:
+      labels:
+        type: api
+    spec:
+      containers:
+      - name: api
+        image: ajitsingh25/myapp:1.0
+        envFrom:
+          - configMapRef:
+              name: my-configmap
+          # - secretRef:
+          #     name: my-creds
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 5000
+          periodSeconds: 1
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 5000
+        resources:
+          limits:
+            memory: 200Mi
+            cpu: 0.2
+          requests:
+            memory: 100Mi
+            cpu: 0.02

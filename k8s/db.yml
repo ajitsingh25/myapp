@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+spec:
+  selector:
+    matchLabels:
+      type: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        type: db
+    spec:
+      containers:
+      - name: db
+        image: mongo:latest
+        envFrom:
+          - configMapRef:
+              name: my-configmap
+        volumeMounts:
+          - name: mongodb-data
+            mountPath: /data
+          # - name: mongodb-creds
+          #   mountPath: /etc/secrets
+          #   readOnly: true
+        resources:
+          limits:
+            memory: 100Mi
+            cpu: 0.1
+          requests:
+            memory: 50Mi
+            cpu: 0.01
+      volumes:
+        - name: mongodb-data
+          emptyDir: {}
+        # - name: mongodb-creds
+        #   secret:
+        #     secretName: my-creds
+        #     defaultMode: 0444

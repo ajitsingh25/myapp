@@ -11,4 +11,5 @@ COPY --from=compile-image /venv /venv
 ENV PATH="/venv/bin:$PATH"
 COPY . /app
 WORKDIR /app
+EXPOSE 5000
 ENTRYPOINT ["python3", "-m", "flask", "run", "--host=0.0.0.0"]
